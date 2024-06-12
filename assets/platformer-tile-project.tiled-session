@@ -1,0 +1,43 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "platformer-level-1.tmx#industrial-pack": {
+            "scaleInEditor": 1
+        },
+        "platformer-level-1.tmx#industrial-pacl": {
+            "scaleInEditor": 1
+        },
+        "platformer-level-1.tmx#tiny_dungeon-pack": {
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "/home/electrickazoo/Documents/Projects/JS_Programs/CMPM120/platformer/assets",
+    "last.imagePath": "/home/electrickazoo/Documents/Projects/JS_Programs/CMPM120/platformer/assets",
+    "map.height": 50,
+    "map.lastUsedExportFilter": "All Files (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 120,
+    "openFiles": [
+    ],
+    "project": "platformer-tile-project.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+    ],
+    "tileset.embedInMap": true,
+    "tileset.margin": 0,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
