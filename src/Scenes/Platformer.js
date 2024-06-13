@@ -5,10 +5,10 @@ class Platformer extends Phaser.Scene {
 
     init() {
         // variables and settings
-        this.ACCELERATION = 200;
-        this.DRAG = 300;    // DRAG < ACCELERATION = icy slide
+        this.ACCELERATION = 100;
+        this.DRAG = 100;    // DRAG < ACCELERATION = icy slide
         this.physics.world.gravity.y = 1250;
-        this.JUMP_VELOCITY = -400;
+        this.JUMP_VELOCITY = -380;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
         this.poweredup = false;
@@ -278,18 +278,17 @@ class Platformer extends Phaser.Scene {
             this.doubleJump -= 1;
         }
 
-        if(Phaser.Input.Keyboard.JustDown(this.rKey) && this.collectibles <= 0) {
+        if(Phaser.Input.Keyboard.JustDown(this.rKey) && this.collectibles <= 14) {
             this.scene.restart();
         }
 
-        if (this.collectibles <= 0)
+        if (this.collectibles <= 14)
         {
             this.wintext.setText("Level: Complete");
 
             if (Phaser.Input.Keyboard.JustDown(this.nKey)) {
 
                 this.scene.start("level2Scene");
-                this.scene.stop("platformerScene");
             }
         }
     }

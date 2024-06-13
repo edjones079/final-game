@@ -3,12 +3,16 @@ class level2 extends Phaser.Scene {
         super("level2Scene");
     }
 
+    preload() {
+        //this.finder = new EasyStar.js();
+    }
+
     init() {
         // variables and settings
-        this.ACCELERATION = 200;
-        this.DRAG = 300;    // DRAG < ACCELERATION = icy slide
+        this.ACCELERATION = 100;
+        this.DRAG = 100;    // DRAG < ACCELERATION = icy slide
         this.physics.world.gravity.y = 1250;
-        this.JUMP_VELOCITY = -400;
+        this.JUMP_VELOCITY = -380;
         this.PARTICLE_VELOCITY = 50;
         this.SCALE = 2.0;
         this.poweredup = false;
@@ -62,7 +66,9 @@ class level2 extends Phaser.Scene {
         // Create a layer
         this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset_industrial, 0, 0);
         this.secondLayer = this.map.createLayer("Background-n-Aesthetics", this.tileset_industrial, 0, 0);
-        //this.sludgeLayer = this.map.createLayer("Sludge", this.tileset_industrial, 0, 0);
+        this.sludgeLayer = this.map.createLayer("Sludge", this.tileset_industrial, 0, 0);
+        this.conveyorLayer = this.map.createLayer("Conveyors", this.tileset_industrial, 0, 0);
+        this.movingPlatformLayer = this.map.createLayer("Moving-Platforms", this.tileset_industrial, 0, 0);
 
         // Make it collidable
         this.groundLayer.setCollisionByProperty({
@@ -70,6 +76,14 @@ class level2 extends Phaser.Scene {
         });
 
         this.sludgeLayer.setCollisionByProperty({
+            collides: true
+        });
+
+        this.conveyorLayer.setCollisionByProperty({
+            collides: true
+        });
+
+        this.movingPlatformLayer.setCollisionByProperty({
             collides: true
         });
 
@@ -94,10 +108,27 @@ class level2 extends Phaser.Scene {
             frame: 61
         });
 
+        this.tutorial = this.map.createFromObjects("Objects", {
+            name: "tutorial",
+            key: "tilemap_sheet_industrial",
+            frame: 42
+        });
+
+        this.ghouls = this.map.createFromObjects("Objects", {
+            name: "ghoul",
+            key: "tilemap_sheet_dungeon",
+            frame: 108,
+        })
+
+        //var sludge = this.map.createFromTiles(this.tileset_industrial.firstgid + 29, null, {key: "tilemap_sheet_industrial"}, this.scene, this.cameras.main, this.sludgeLayer);
+
+        //console.log(sludge);
+
         // TODO: Add turn into Arcade Physics here
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.spawn, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.powerup, Phaser.Physics.Arcade.STATIC_BODY);
+        this.physics.world.enable(this.ghouls, Phaser.Physics.Arcade.STATIC_BODY);
 
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, true, true, true, true);
 
@@ -110,8 +141,14 @@ class level2 extends Phaser.Scene {
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);
         this.physics.add.collider(my.sprite.player, this.sludgeLayer);
+        this.physics.add.collider(my.sprite.player, this.conveyorLayer);
+        this.physics.add.collider(my.sprite.player, this.movingPlatformLayer);
+        //this.physics.add.collider(my.sprite.player, sludge);
+
+
 
         this.coinGroup = this.add.group(this.coins);
+        this.ghoulGroup = this.add.group(this.ghouls);
 
         // TODO: Add coin collision handler
         this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => {
@@ -122,14 +159,17 @@ class level2 extends Phaser.Scene {
 
         });
 
+        this.physics.add.overlap(my.sprite.player, this.ghoulGroup, (obj1, obj2) => {// remove coin on overlap
+            this.scene.restart();
+            //console.log(this.collectibles);
+
+        });
+
         this.physics.add.overlap(my.sprite.player, this.powerup, (obj1, obj2) => {
             obj2.destroy();
             this.poweredup = true;
         });
 
-        this.physics.world.collide(my.sprite.player.body, this.sludgeLayer, (obj1, obj2) => {
-            this.scene.restart(); // remove coin on overlap
-        });
 
 
         // set up Phaser-provided cursor key input
@@ -183,6 +223,7 @@ class level2 extends Phaser.Scene {
 
     update() {
 
+        
         this.background_front.setTilePosition(this.cameras.main.scrollX);
         this.background_back.setTilePosition(this.cameras.main.scrollX);
 

@@ -12,9 +12,12 @@ class Load extends Phaser.Scene {
         //console.log('platformer_characters');
 
         // Load tilemap information
+        this.load.image("menu_background", "city_background_1");
         this.load.image("industrial_tiles", "industrial_pack.png");   
         this.load.image("dungeon_tiles", "tiny_dungeon.png");                            // Packed tilemap
-        this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");   // Tilemap in JSON
+        this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");  
+        this.load.tilemapTiledJSON("platformer-level-2", "platformer-level-2.tmj");
+        //this.load.tilemapTiledJSON("platformer-level-3", "platformer-level-3.tmj"); // Tilemap in JSON
 
         this.load.image("bg_back", "building_back");
         this.load.image("bg_front", "building_front");
@@ -83,7 +86,7 @@ class Load extends Phaser.Scene {
         });
 
          // ...and pass to the next Scene
-         this.scene.start("platformerScene");
+         this.scene.start("menuScene");
     }
 
     // Never get here since a new scene is started in create()
