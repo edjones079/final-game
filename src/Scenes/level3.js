@@ -20,7 +20,7 @@ class level3 extends Phaser.Scene {
     create() {
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.
-        this.map = this.add.tilemap("platformer-level-1", 18, 18, 45, 25);
+        this.map = this.add.tilemap("platformer-level-3", 18, 18, 45, 25);
 
         this.background_back = this.add.tileSprite(0, 0, this.map.widthInPixels * 3, this.map.heightInPixels, "bg_back");
         this.background_back.setOrigin(0);
@@ -62,7 +62,7 @@ class level3 extends Phaser.Scene {
         // Create a layer
         this.groundLayer = this.map.createLayer("Ground-n-Platforms", this.tileset_industrial, 0, 0);
         this.secondLayer = this.map.createLayer("Background-n-Aesthetics", this.tileset_industrial, 0, 0);
-        this.sludgeLayer = this.map.createLayer("Sludge", this.tileset_industrial, 0, 0);
+        //this.sludgeLayer = this.map.createLayer("Sludge", this.tileset_industrial, 0, 0);
 
         // Make it collidable
         this.groundLayer.setCollisionByProperty({

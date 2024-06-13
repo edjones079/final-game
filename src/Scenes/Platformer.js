@@ -138,6 +138,8 @@ class Platformer extends Phaser.Scene {
         this.rKey = this.input.keyboard.addKey('R');
         this.aKey = this.input.keyboard.addKey('A');
         this.dKey = this.input.keyboard.addKey('D');
+        this.nKey = this.input.keyboard.addKey('N');
+        this.eKey = this.input.keyboard.addKey('E');
 
         this.spaceKey = this.input.keyboard.addKey('SPACE');
 
@@ -283,6 +285,12 @@ class Platformer extends Phaser.Scene {
         if (this.collectibles <= 0)
         {
             this.wintext.setText("Level: Complete");
+
+            if (Phaser.Input.Keyboard.JustDown(this.nKey)) {
+
+                this.scene.start("level2Scene");
+                this.scene.stop("platformerScene");
+            }
         }
     }
 }
