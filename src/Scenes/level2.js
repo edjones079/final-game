@@ -371,7 +371,7 @@ class level2 extends Phaser.Scene {
             this.scene.restart();
         }
 
-        if (this.collectibles <= 14)
+        if (this.collectibles <= 0)
         {
             this.wintext.setText("Level: Complete");
     
