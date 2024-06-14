@@ -167,8 +167,8 @@ class Platformer extends Phaser.Scene {
         });
 
         this.physics.add.overlap(my.sprite.player, this.sludge, (obj1, obj2) => {
-            this.scene.restart(); // remove coin on overlap
             this.music.stop();
+            this.scene.restart(); // remove coin on overlap
         });
 
 
