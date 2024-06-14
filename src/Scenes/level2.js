@@ -18,7 +18,7 @@ class level2 extends Phaser.Scene {
         this.poweredup = false;
         this.poweruptime = 1000;
         this.doubleJump = 2;
-        this.collectibles = 15;
+        this.collectibles = 10;
         this.colliding = false;
     }
 
