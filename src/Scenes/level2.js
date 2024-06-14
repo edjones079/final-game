@@ -44,7 +44,7 @@ class level2 extends Phaser.Scene {
 
         this.music = this.sound.add("level_1_music", { loop: true });
 
-        //this.music.play();
+        this.music.play();
 
         this.wintext = this.add.text(100, 150, "Level: Incomplete", { fontSize: '8px', fill: '#fff'});
         this.wintext.setColor("white");

@@ -44,7 +44,7 @@ class Platformer extends Phaser.Scene {
 
         this.music = this.sound.add("level_1_music", { loop: true });
 
-        //this.music.play();
+        this.music.play();
         
 
         // Load text
