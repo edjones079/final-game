@@ -6,15 +6,22 @@ class Load extends Phaser.Scene {
     preload() {
         this.load.setPath("./assets/");
 
+        //this.load.font('JazzClub', 'assets/Jazz_Club.ttf');
+
         // Load characters spritesheet
         this.load.atlas("platformer_characters", "adventurer-v1.5-Sheet.png", "adventurer-v1.5-Sheet.json");
 
         //console.log('platformer_characters');
 
-        // Load tilemap information
+        // Load background images
         this.load.image("menu_background", "city_background_1");
+        this.load.image("credits_background", "city_background_4");
+
+        // Load tilesets
         this.load.image("industrial_tiles", "industrial_pack.png");   
-        this.load.image("dungeon_tiles", "tiny_dungeon.png");                            // Packed tilemap
+        this.load.image("dungeon_tiles", "tiny_dungeon.png");       
+
+        // Load tilemap information                    // Packed tilemap
         this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");  
         this.load.tilemapTiledJSON("platformer-level-2", "platformer-level-2.tmj");
         //this.load.tilemapTiledJSON("platformer-level-3", "platformer-level-3.tmj"); // Tilemap in JSON
@@ -22,7 +29,12 @@ class Load extends Phaser.Scene {
         this.load.image("bg_back", "building_back");
         this.load.image("bg_front", "building_front");
 
+        // Load audio
         this.load.audio("gem_sound", ["gem.wav"]);
+        this.load.audio("menu_music", ["podcast-jazz-music-168726.mp3"]);
+        this.load.audio("credits_music", ["ogi-feel-the-beat-jazz-expresso-191266.mp3"]);
+        this.load.audio("level_1_music", ["fast-jazz-143910.mp3"]);
+        //this.load.audio("level_2_music", [""]);
 
         // Load the tilemap as a spritesheet
         this.load.spritesheet("tilemap_sheet_industrial", "industrial_pack.png", {

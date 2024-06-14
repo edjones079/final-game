@@ -22,10 +22,14 @@ class level2 extends Phaser.Scene {
     }
 
     create() {
+
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
+
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.
         this.map = this.add.tilemap("platformer-level-2", 18, 18, 45, 25);
 
+        // Load scrolling background
         this.background_back = this.add.tileSprite(0, 0, this.map.widthInPixels * 3, this.map.heightInPixels, "bg_back");
         this.background_back.setOrigin(0);
         this.background_back.setScrollFactor(0, 2.5);
@@ -34,17 +38,12 @@ class level2 extends Phaser.Scene {
         this.background_front.setOrigin(0);
         this.background_front.setScrollFactor(0, 2.5);
 
+        // Load audio
         this.ding = this.sound.add("gem_sound", { loop: false });
 
-        this.titletext = this.add.text(100, 160, "The Artifactory", { fontSize: '16px', fill: '#fff'});
-        this.titletext.setColor("white");
-        //this.wintext.visible = false;
-        this.titletext.setOrigin(0.5);
+        this.music = this.sound.add("level_1_music", { loop: true });
 
-        this.resettext = this.add.text(165, 180, "Press 'R' to restart after level is completed.", { fontSize: '10px', fill: '#fff'});
-        this.resettext.setColor("white");
-        //this.wintext.visible = false;
-        this.resettext.setOrigin(0.5);
+        //this.music.play();
 
         this.wintext = this.add.text(100, 150, "Level: Incomplete", { fontSize: '8px', fill: '#fff'});
         this.wintext.setColor("white");
@@ -111,7 +110,9 @@ class level2 extends Phaser.Scene {
         this.tutorial = this.map.createFromObjects("Objects", {
             name: "tutorial",
             key: "tilemap_sheet_industrial",
-            frame: 42
+            frame: 42,
+            x: 72,
+            y: 255
         });
 
         this.ghouls = this.map.createFromObjects("Objects", {
@@ -119,6 +120,29 @@ class level2 extends Phaser.Scene {
             key: "tilemap_sheet_dungeon",
             frame: 108,
         })
+
+        this.sludge = this.map.createFromObjects("Objects", {
+            name: "sludge",
+            key: "tilemap_sheet_industrial",
+            frame: 29
+        });
+
+        this.wall = this.map.createFromObjects("Objects", {
+            name: "wall",
+            key: "tilemap_sheet_industrial",
+            frame: 75
+        });
+
+        // More text for the tutorial
+        this.tutorialText1 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 80, "You must collect all the elixirs!", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText2 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 65, "Press 'R' to restart the current level.", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText3 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 50, "Press 'N' to proceed to the next level.", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText4 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 35, "Watch out for ghosts!", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText1.visible = false;
+        this.tutorialText2.visible = false;
+        this.tutorialText3.visible = false;
+        this.tutorialText4.visible = false;
+
 
         //var sludge = this.map.createFromTiles(this.tileset_industrial.firstgid + 29, null, {key: "tilemap_sheet_industrial"}, this.scene, this.cameras.main, this.sludgeLayer);
 
@@ -129,6 +153,8 @@ class level2 extends Phaser.Scene {
         this.physics.world.enable(this.spawn, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.powerup, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.ghouls, Phaser.Physics.Arcade.STATIC_BODY);
+        this.physics.world.enable(this.sludge, Phaser.Physics.Arcade.STATIC_BODY);
+        this.physics.world.enable(this.wall, Phaser.Physics.Arcade.STATIC_BODY);
 
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, true, true, true, true);
 
@@ -143,6 +169,7 @@ class level2 extends Phaser.Scene {
         this.physics.add.collider(my.sprite.player, this.sludgeLayer);
         this.physics.add.collider(my.sprite.player, this.conveyorLayer);
         this.physics.add.collider(my.sprite.player, this.movingPlatformLayer);
+        this.physics.add.collider(my.sprite.player, this.wall);
         //this.physics.add.collider(my.sprite.player, sludge);
 
 
@@ -170,7 +197,14 @@ class level2 extends Phaser.Scene {
             this.poweredup = true;
         });
 
+        this.physics.add.overlap(my.sprite.player, this.sludge, (obj1, obj2) => {
+            this.scene.restart(); // remove coin on overlap
+        });
 
+        this.physics.world.collide(my.sprite.player.body, this.wall, (obj1, obj2) => {
+            this.doubleJump += 1;
+            console.log("HELLO");
+        })
 
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
@@ -178,6 +212,8 @@ class level2 extends Phaser.Scene {
         this.rKey = this.input.keyboard.addKey('R');
         this.aKey = this.input.keyboard.addKey('A');
         this.dKey = this.input.keyboard.addKey('D');
+        this.nKey = this.input.keyboard.addKey('N');
+        this.eKey = this.input.keyboard.addKey('E');
 
         this.spaceKey = this.input.keyboard.addKey('SPACE');
 
@@ -229,6 +265,17 @@ class level2 extends Phaser.Scene {
 
         this.wintext.x = my.sprite.player.body.x;
         this.wintext.y = my.sprite.player.body.y - 10;
+
+        if (Phaser.Input.Keyboard.JustDown(this.eKey) && Math.abs(my.sprite.player.x - this.tutorial[0].x) < 30)
+        {
+            
+            this.tutorialText1.visible = !this.tutorialText1.visible;
+            this.tutorialText2.visible = !this.tutorialText2.visible;
+            this.tutorialText3.visible = !this.tutorialText3.visible;
+            this.tutorialText4.visible = !this.tutorialText4.visible;
+
+        }
+
 
         if(this.aKey.isDown) {
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
@@ -321,9 +368,15 @@ class level2 extends Phaser.Scene {
             this.scene.restart();
         }
 
-        if (this.collectibles <= 0)
+        if (this.collectibles <= 14)
         {
             this.wintext.setText("Level: Complete");
+    
+            if (Phaser.Input.Keyboard.JustDown(this.nKey)) {
+
+                this.scene.start("creditsScene");
+                this.music.stop();
+            }
         }
     }
 }

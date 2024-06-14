@@ -15,13 +15,22 @@ class Platformer extends Phaser.Scene {
         this.poweruptime = 1000;
         this.doubleJump = 2;
         this.collectibles = 15;
+
+        this.tutorialTextSpawned = false;
+        this.textTimer = 5000;
     }
 
     create() {
+
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
+
+        console.log(this.cameras.main.x);
+        console.log(this.cameras.main.y);
         // Create a new tilemap game object which uses 18x18 pixel tiles, and is
         // 45 tiles wide and 25 tiles tall.
         this.map = this.add.tilemap("platformer-level-1", 18, 18, 45, 25);
 
+        // Load scrolling background
         this.background_back = this.add.tileSprite(0, 0, this.map.widthInPixels * 3, this.map.heightInPixels, "bg_back");
         this.background_back.setOrigin(0);
         this.background_back.setScrollFactor(0, 2.5);
@@ -30,14 +39,21 @@ class Platformer extends Phaser.Scene {
         this.background_front.setOrigin(0);
         this.background_front.setScrollFactor(0, 2.5);
 
+        // Load audio
         this.ding = this.sound.add("gem_sound", { loop: false });
 
+        this.music = this.sound.add("level_1_music", { loop: true });
+
+        //this.music.play();
+        
+
+        // Load text
         this.titletext = this.add.text(100, 160, "The Artifactory", { fontSize: '16px', fill: '#fff'});
         this.titletext.setColor("white");
         //this.wintext.visible = false;
         this.titletext.setOrigin(0.5);
 
-        this.resettext = this.add.text(165, 180, "Press 'R' to restart after level is completed.", { fontSize: '10px', fill: '#fff'});
+        this.resettext = this.add.text(142, 180, "Press 'E' near tutorial sign for help.", { fontSize: '10px', fill: '#fff'});
         this.resettext.setColor("white");
         //this.wintext.visible = false;
         this.resettext.setOrigin(0.5);
@@ -94,10 +110,33 @@ class Platformer extends Phaser.Scene {
             frame: 61
         });
 
+        this.tutorial = this.map.createFromObjects("Objects", {
+            name: "tutorial",
+            key: "tilemap_sheet_industrial",
+            frame: 42,
+            x: 378,
+            y: 323
+        });
+
+        this.sludge = this.map.createFromObjects("Objects", {
+            name: "sludge",
+            key: "tilemap_sheet_industrial",
+            frame: 29
+        });
+
+        // More text for the tutorial
+        this.tutorialText1 = this.add.text(this.tutorial[0].x - 80, this.tutorial[0].y - 100, "You must collect all the elixirs!", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText2 = this.add.text(this.tutorial[0].x - 80, this.tutorial[0].y - 85, "Press 'R' to restart the current level.", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText3 = this.add.text(this.tutorial[0].x - 80, this.tutorial[0].y - 75, "Press 'N' to proceed to the next level.", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText1.visible = false;
+        this.tutorialText2.visible = false;
+        this.tutorialText3.visible = false;
+
         // TODO: Add turn into Arcade Physics here
         this.physics.world.enable(this.coins, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.spawn, Phaser.Physics.Arcade.STATIC_BODY);
         this.physics.world.enable(this.powerup, Phaser.Physics.Arcade.STATIC_BODY);
+        this.physics.world.enable(this.sludge, Phaser.Physics.Arcade.STATIC_BODY);
 
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels, true, true, true, true);
 
@@ -109,7 +148,7 @@ class Platformer extends Phaser.Scene {
 
         // Enable collision handling
         this.physics.add.collider(my.sprite.player, this.groundLayer);
-        this.physics.add.collider(my.sprite.player, this.sludgeLayer);
+        //this.physics.add.collider(my.sprite.player, this.sludgeLayer);
 
         this.coinGroup = this.add.group(this.coins);
 
@@ -127,7 +166,7 @@ class Platformer extends Phaser.Scene {
             this.poweredup = true;
         });
 
-        this.physics.world.collide(my.sprite.player.body, this.sludgeLayer, (obj1, obj2) => {
+        this.physics.add.overlap(my.sprite.player, this.sludge, (obj1, obj2) => {
             this.scene.restart(); // remove coin on overlap
         });
 
@@ -181,6 +220,8 @@ class Platformer extends Phaser.Scene {
         this.cameras.main.setDeadzone(200, 50);
         this.cameras.main.setZoom(this.SCALE * 1.25);
 
+        console.log(this.tutorial[0].y);
+
     }
 
     update() {
@@ -190,6 +231,15 @@ class Platformer extends Phaser.Scene {
 
         this.wintext.x = my.sprite.player.body.x;
         this.wintext.y = my.sprite.player.body.y - 10;
+
+        if (Phaser.Input.Keyboard.JustDown(this.eKey) && Math.abs(my.sprite.player.x - this.tutorial[0].x) < 30)
+        {
+            
+            this.tutorialText1.visible = !this.tutorialText1.visible;
+            this.tutorialText2.visible = !this.tutorialText2.visible;
+            this.tutorialText3.visible = !this.tutorialText3.visible;
+
+        }
 
         if(this.aKey.isDown) {
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
@@ -288,7 +338,15 @@ class Platformer extends Phaser.Scene {
 
             if (Phaser.Input.Keyboard.JustDown(this.nKey)) {
 
-                this.scene.start("level2Scene");
+                this.cameras.main.pan(1000, 1000, 400, 'Bounce');
+
+                this.cameras.main.once(Phaser.Cameras.Scene2D.Events.PAN_COMPLETE, (cam, effect) => {
+                    this.scene.start('level2Scene');
+                })
+
+                //this.scene.start("level2Scene");
+                this.music.stop();
+
             }
         }
     }
