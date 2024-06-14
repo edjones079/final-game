@@ -19,6 +19,7 @@ class level2 extends Phaser.Scene {
         this.poweruptime = 1000;
         this.doubleJump = 2;
         this.collectibles = 15;
+        this.colliding = false;
     }
 
     create() {
@@ -134,14 +135,16 @@ class level2 extends Phaser.Scene {
         });
 
         // More text for the tutorial
-        this.tutorialText1 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 80, "You must collect all the elixirs!", { fontSize: '8px', fill: '#fff'});
-        this.tutorialText2 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 65, "Press 'R' to restart the current level.", { fontSize: '8px', fill: '#fff'});
-        this.tutorialText3 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 50, "Press 'N' to proceed to the next level.", { fontSize: '8px', fill: '#fff'});
-        this.tutorialText4 = this.add.text(this.tutorial[0].x - 50, this.tutorial[0].y - 35, "Watch out for ghosts!", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText1 = this.add.text(this.tutorial[0].x + 10, this.tutorial[0].y - 90, "You must collect all the elixirs!", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText2 = this.add.text(this.tutorial[0].x + 10, this.tutorial[0].y - 75, "Press 'R' to restart the current level.", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText3 = this.add.text(this.tutorial[0].x + 10, this.tutorial[0].y - 60, "Press 'N' to proceed to the next level.", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText4 = this.add.text(this.tutorial[0].x + 10, this.tutorial[0].y - 45, "Watch out for ghosts!", { fontSize: '8px', fill: '#fff'});
+        this.tutorialText5 = this.add.text(this.tutorial[0].x + 10, this.tutorial[0].y - 30, "Certain metal pipes allow wall-jumping.", { fontSize: '8px', fill: '#fff'});
         this.tutorialText1.visible = false;
         this.tutorialText2.visible = false;
         this.tutorialText3.visible = false;
         this.tutorialText4.visible = false;
+        this.tutorialText5.visible = false;
 
 
         //var sludge = this.map.createFromTiles(this.tileset_industrial.firstgid + 29, null, {key: "tilemap_sheet_industrial"}, this.scene, this.cameras.main, this.sludgeLayer);
@@ -169,7 +172,7 @@ class level2 extends Phaser.Scene {
         this.physics.add.collider(my.sprite.player, this.sludgeLayer);
         this.physics.add.collider(my.sprite.player, this.conveyorLayer);
         this.physics.add.collider(my.sprite.player, this.movingPlatformLayer);
-        this.physics.add.collider(my.sprite.player, this.wall);
+        //this.physics.add.collider(my.sprite.player, this.wall);
         //this.physics.add.collider(my.sprite.player, sludge);
 
 
@@ -201,7 +204,7 @@ class level2 extends Phaser.Scene {
             this.scene.restart(); // remove coin on overlap
         });
 
-        this.physics.world.collide(my.sprite.player.body, this.wall, (obj1, obj2) => {
+        this.physics.add.overlap(my.sprite.player, this.wall, (obj1, obj2) => {
             this.doubleJump += 1;
             console.log("HELLO");
         })
@@ -259,7 +262,6 @@ class level2 extends Phaser.Scene {
 
     update() {
 
-        
         this.background_front.setTilePosition(this.cameras.main.scrollX);
         this.background_back.setTilePosition(this.cameras.main.scrollX);
 
@@ -273,6 +275,7 @@ class level2 extends Phaser.Scene {
             this.tutorialText2.visible = !this.tutorialText2.visible;
             this.tutorialText3.visible = !this.tutorialText3.visible;
             this.tutorialText4.visible = !this.tutorialText4.visible;
+            this.tutorialText5.visible = !this.tutorialText5.visible;
 
         }
 
