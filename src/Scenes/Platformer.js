@@ -330,6 +330,7 @@ class Platformer extends Phaser.Scene {
         }
 
         if(Phaser.Input.Keyboard.JustDown(this.rKey) && this.collectibles <= 0) {
+            this.music.stop();
             this.scene.restart();
         }
 
