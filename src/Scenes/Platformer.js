@@ -328,7 +328,7 @@ class Platformer extends Phaser.Scene {
             this.doubleJump -= 1;
         }
 
-        if(Phaser.Input.Keyboard.JustDown(this.rKey) && this.collectibles <= 14) {
+        if(Phaser.Input.Keyboard.JustDown(this.rKey) && this.collectibles <= 0) {
             this.scene.restart();
         }
 
